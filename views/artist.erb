@@ -1,4 +1,17 @@
 <html>
+    <head>
+        <style>
+            body{
+                margin: 0 auto;
+            }
+            .artist_img{
+                width: 30%;
+            }
+            .album_img{
+                width: 20%;
+            }
+        </style>
+    </head>
 	<body>
 		<header>
 			<h1><%= artist[0][1] %></h1>
@@ -34,6 +47,107 @@
             <input type="text" name = "newname" placeholder="Update Band's Name Here?" required>
             <button>UPDATE IT!</button>
         </form>
+
+        <section id = 'artist_section'></section>
+        <section id = 'album_section'></section>
+
+
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>
+
+        //THIS IS FOR THE IMAGE OF THE BAND
+        var artist = <%=artist[0]%>;
+        var artist_name = artist[1];
+        encoded = artist_name.replace(" ", "+");
+        console.log(encoded);
+
+        var url = "https://api.spotify.com/v1/search?q=artist:" + encoded + "&type=artist";
+
+        var xhr = new XMLHttpRequest();
+
+
+        xhr.addEventListener('load', function(e) {
+      
+        var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+
+        var artist_section = document.getElementById('artist_section');
+
+        var artist_img = document.createElement('img');
+        artist_img.className = "artist_img";
+        artist_img.src = parsed['artists']['items'][0]['images'][0]['url'];
+        artist_section.appendChild(artist_img);
+
+        var band_id = parsed['artists']['items'][0]['id']
+        albumFinder(band_id);
+
+        console.log(parsed);
+    })
+        xhr.open("GET", url);
+        xhr.send();
+    
+
+
+
+        //ALBUM FINDER
+        var albumFinder = function(band_id){
+        
+        var url = "https://api.spotify.com/v1/artists/" + band_id + "/albums"
+        var xhr = new XMLHttpRequest();
+
+        xhr.addEventListener('load', function(e) {
+      
+        var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+  
+        var album_section = document.getElementById('album_section');
+
+        //gets all album names
+        var name_array = []
+        var i = 0
+        while(i < parsed['items'].length){
+         var name = parsed['items'][i]['name']
+         name_array.push(name);
+         console.log(name);
+         i++;
+        }
+
+        //finds all the albums that dont include "(" (those ones are duplicates)
+        //and duplicate names
+        //and pushes their indexs into another array
+        var index_array = []
+        var x = 0;
+        while(x < name_array.length){
+            var check = name_array[x]
+            var check_two = name_array[x+1]
+            if(name_array[x].indexOf("(") === -1 && check != check_two){
+                index_array.push(name_array.indexOf(name_array[x]))
+            }
+            x++;
+        }
+        console.log(name_array)
+        console.log(index_array)
+
+        //this puts all the albums on the page
+        var z = 0
+        while(z < index_array.length){
+            var img = document.createElement('img');
+            img.src = parsed['items'][index_array[z]]['images'][0]['url'];
+            img.className = "album_img";
+            album_section.appendChild(img);
+            z++;
+        }
+        
+        console.log(parsed);
+    })
+
+        xhr.open("GET", url);
+        xhr.send();
+
+    }
+
+        </script>
 
 
 	</body>
