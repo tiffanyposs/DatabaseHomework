@@ -49,7 +49,19 @@
         </form>
 
         <section id = 'artist_section'></section>
-        <section id = 'album_section'></section>
+
+        <section id = 'album_section'>
+            <h3>Albums</h3>
+        </section>
+
+        <section id = 'top_ten'>
+            <h3><%= artist[0][1] %>'s Top Songs</h3>
+            <ol id = 'top_ten_list'></ol>
+        </section>
+
+        <section id = "related_bands">
+            <h3>Similar to <%= artist[0][1] %></h3>
+        </section>
 
 
 
@@ -57,10 +69,12 @@
         <script>
 
         //THIS IS FOR THE IMAGE OF THE BAND
+        //TRIGGERS OTHER AREAS
+        //ids = artist_section, artist_img
         var artist = <%=artist[0]%>;
         var artist_name = artist[1];
         encoded = artist_name.replace(" ", "+");
-        console.log(encoded);
+        // console.log(encoded);
 
         var url = "https://api.spotify.com/v1/search?q=artist:" + encoded + "&type=artist";
 
@@ -79,19 +93,55 @@
         artist_img.src = parsed['artists']['items'][0]['images'][0]['url'];
         artist_section.appendChild(artist_img);
 
-        var band_id = parsed['artists']['items'][0]['id']
+        var band_id = parsed['artists']['items'][0]['id'];
+        relatedBands(band_id)
         albumFinder(band_id);
+        topTracks(band_id)
 
-        console.log(parsed);
+        // console.log(parsed);
     })
         xhr.open("GET", url);
         xhr.send();
     
+//GENERATES LIST OF SIMILAR BANDS, IMAGES AND THEIR NAME
+//class  band
+// id related_bands
+var relatedBands= function(band_id){
+            var url = "https://api.spotify.com/v1/artists/" + band_id + "/related-artists"
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', function(e) {
+                var d = xhr.responseText;
+                var parsed = JSON.parse(d);
+                // console.log(parsed);
+
+                var related_bands = document.getElementById('related_bands');
+
+                var i = 0;
+                while(i < parsed['artists'].length){
+                    var div = document.createElement('div');
+                    div.className = "band";
+                    related_bands.appendChild(div);
+                    var img = document.createElement('img');
+                    img.src = parsed['artists'][i]['images'][1]['url'];
+                    div.appendChild(img);
+                    var p = document.createElement('p');
+                    p.innerText = parsed['artists'][i]['name'];
+                    div.appendChild(p);
+                    i++;
+                }
+            })
+
+            xhr.open("GET", url);
+            xhr.send();
+        }
 
 
 
-        //ALBUM FINDER
-        var albumFinder = function(band_id){
+    //ALBUM FINDER
+    //LOOPS THROUGH ALL THE ALBUMS BASED ON THE BANDS ID
+    //THEN MAKES SURE THERES NO DUPLICATES
+    //class names : album_img
+var albumFinder = function(band_id){
         
         var url = "https://api.spotify.com/v1/artists/" + band_id + "/albums"
         var xhr = new XMLHttpRequest();
@@ -100,6 +150,7 @@
       
         var d = xhr.responseText;
         var parsed = JSON.parse(d);
+        console.log(parsed)
   
         var album_section = document.getElementById('album_section');
 
@@ -109,13 +160,12 @@
         while(i < parsed['items'].length){
          var name = parsed['items'][i]['name']
          name_array.push(name);
-         console.log(name);
+         // console.log(name);
          i++;
         }
 
         //finds all the albums that dont include "(" (those ones are duplicates)
         //and duplicate names
-        //and pushes their indexs into another array
         var index_array = []
         var x = 0;
         while(x < name_array.length){
@@ -126,8 +176,6 @@
             }
             x++;
         }
-        console.log(name_array)
-        console.log(index_array)
 
         //this puts all the albums on the page
         var z = 0
@@ -136,17 +184,50 @@
             img.src = parsed['items'][index_array[z]]['images'][0]['url'];
             img.className = "album_img";
             album_section.appendChild(img);
+
+            var p = document.createElement('p');
+            p.innerText = parsed['items'][index_array[z]]['name'];
+            album_section.appendChild(p);
             z++;
         }
-        
-        console.log(parsed);
-    })
+        })
 
         xhr.open("GET", url);
         xhr.send();
+}
 
+//POPULTES THE TOP TRACKS IN THE USA FROM THIS ARTIST
+//class top_ten_tracks
+//id top_ten_list
+var topTracks = function(band_id){
+    //top tracks
+    var url = "https://api.spotify.com/v1/artists/" + band_id + "/top-tracks?country=US";
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', function(e) {
+  
+    var d = xhr.responseText;
+    var parsed = JSON.parse(d);
+    // console.log(parsed);
+
+
+    var top_ten_list = document.getElementById('top_ten_list');
+
+    var x = 0
+    while(x < parsed['tracks'].length){
+    var li = document.createElement('li');
+    li.className = "top_ten_track";
+    li.innerText = parsed['tracks'][x]['name'];
+    top_ten_list.appendChild(li);
+    x++;
     }
 
+    })
+
+    xhr.open("GET", url);
+    xhr.send();
+
+}
         </script>
 
 

@@ -2,11 +2,20 @@
 	<body>
 		<header>
 			<h1><%= album[0][1] %></h1>
+            <h3><%= artist[0][1]%></h3>
             <a href="/artist/<%= album[0][2] %>">Go Back</a>
             <a href="/artists">See All Artists</a>
 		</header>
 
-        <Albums>
+        <section id = "artist_section"></section>
+        <section id = "album_section"></section>
+        <section id = "album_tracks">
+            <h3><%= album[0][1] %>'s Tracks:</h3>
+            <ol id = "tracks">
+            </ol>
+        </section>
+
+
         <ul>
         <%songs.each do |song| %>
         <li>
@@ -44,6 +53,139 @@
             <input type="text" name = "newname" placeholder="Update Albums's Name Here?" required>
             <button>UPDATE IT!</button>
         </form>
+
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>
+
+
+        //THIS IS FOR THE IMAGE OF THE BAND
+        var artist = <%=artist[0]%>;
+        var artist_name = artist[1];
+        encoded = artist_name.replace(" ", "+");
+
+        var url = "https://api.spotify.com/v1/search?q=artist:" + encoded + "&type=artist";
+
+        var xhr = new XMLHttpRequest();
+
+
+        xhr.addEventListener('load', function(e) {
+      
+        var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+
+        var artist_section = document.getElementById('artist_section');
+
+        var artist_img = document.createElement('img');
+        artist_img.className = "artist_img";
+        artist_img.src = parsed['artists']['items'][0]['images'][0]['url'];
+        artist_section.appendChild(artist_img);
+
+        var band_id = parsed['artists']['items'][0]['id'];
+
+        getAlbum(band_id)
+    })
+        xhr.open("GET", url);
+        xhr.send();
+
+
+
+
+//ALBUM FINDER, GETS THE ALBUM'S IMAGE
+var getAlbum = function(band_id){
+        
+        var url = "https://api.spotify.com/v1/artists/" + band_id + "/albums"
+        var xhr = new XMLHttpRequest();
+
+        xhr.addEventListener('load', function(e) {
+      
+        var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+  
+        var album_section = document.getElementById('album_section');
+
+        var i = 0;
+        while(i < parsed['items'].length){
+        var album = <%= album[0] %>;
+        var album_name = album[1];
+        if(parsed['items'][i]['name'] === album_name){
+            console.log(parsed['items'][i]);
+            var img = document.createElement('img');
+            img.src = parsed['items'][i]['images'][0]['url'];
+            album_section.appendChild(img);
+            var album_id = parsed['items'][i]['id'];
+            i = parsed['items'].length;
+        }
+        i++;
+        }
+        albumInfo(album_id);
+    })
+
+        xhr.open("GET", url);
+        xhr.send();
+
+    }
+
+
+//THIS GET THE INFO AND MAKE A LIST OF ALL THE TRACKS FROM THIS ALBUMAND THE RELEASE DATE
+//id tracks, date, album_section
+var albumInfo = function(album_id){
+        var url = "https://api.spotify.com/v1/albums/" + album_id;
+        var xhr = new XMLHttpRequest();
+
+        xhr.addEventListener('load', function(e) {
+            var d = xhr.responseText;
+            var parsed = JSON.parse(d);
+            console.log(parsed);
+
+            var release_date = parsed['release_date'];
+
+            //runs the function niceDate to get a better format of the date
+            var new_date = niceDate(release_date);
+            console.log(new_date)
+
+            var album_section = document.getElementById('album_section');
+            var date = document.createElement('p');
+            date.id = "date";
+            date.innerText = "Album Release Date: " + new_date
+            album_section.appendChild(date);
+
+            var tracks = document.getElementById('tracks') 
+
+            var i = 0;
+            while(i < parsed['tracks']['items'].length){
+                var li = document.createElement('li');
+                li.innerText = parsed['tracks']['items'][i]['name'];
+                tracks.appendChild(li)
+                i++;
+            }
+
+        })
+        xhr.open("GET", url);
+        xhr.send();
+    }
+
+//THIS GOES THROUGH THE DATE LAYOUT GIVEN BY SPOTIFY, AND FORMATS IT NICER
+//CALLED FROM albumInfo
+var niceDate = function(release_date){
+            date_array = release_date.split("-")
+            if(date_array[1] === "01"){ date_array[1] = "January"};
+            if(date_array[1] === "02"){ date_array[1] = "February"};
+            if(date_array[1] === "03"){ date_array[1] = "March"};
+            if(date_array[1] === "04"){ date_array[1] = "April"};
+            if(date_array[1] === "05"){ date_array[1] = "May"};
+            if(date_array[1] === "06"){ date_array[1] = "June"};
+            if(date_array[1] === "07"){ date_array[1] = "July"};
+            if(date_array[1] === "08"){ date_array[1] = "August"};
+            if(date_array[1] === "09"){ date_array[1] = "September"};
+            if(date_array[1] === "10"){ date_array[1] = "October"};
+            if(date_array[1] === "11"){ date_array[1] = "November"};
+            if(date_array[1] === "12"){ date_array[1] = "December"};
+
+            var new_date = date_array[1] + " " + date_array[2] + ", " + date_array[0];
+            return new_date;
+        }
+        </script>
 
 
 	</body>

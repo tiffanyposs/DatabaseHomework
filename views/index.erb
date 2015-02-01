@@ -44,12 +44,16 @@
 
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script>
+        <script src="/js/index.js">
 
+
+        //ON PAGE LOAD
+        //THIS GENERATES EACH ARTIST IMAGE
+        //ids: artist_section, artist_img
         var artists = <%= artists %>;
         console.log(artists);
 
-        artists.forEach(function(artist){
+artists.forEach(function(artist){
         var artist_name = artist[1]
         encoded = artist_name.replace(" ", "+");
         console.log(encoded);
@@ -59,7 +63,7 @@
         var xhr = new XMLHttpRequest();
 
 
-        xhr.addEventListener('load', function(e) {
+    xhr.addEventListener('load', function(e) {
       
         var d = xhr.responseText;
         var parsed = JSON.parse(d);

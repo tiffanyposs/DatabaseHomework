@@ -1,0 +1,19 @@
+<html>
+	<body>
+		<header>
+			<h1><%= artist[0][1] %></h1>
+            <a href="/artists">See All Artists</a>
+		</header>
+
+        <Albums>
+        <ul>
+        <%albums.each do |album| %>
+        <li><a href="/album/<%= album[0] %>"><%= album[1] %></a>.</li>
+        <% end %>
+        </ul>
+
+
+
+
+	</body>
+</html>
