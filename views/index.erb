@@ -1,0 +1,35 @@
+<html>
+	<body>
+		<header>
+			<h1>Artists</h1>
+		</header>
+
+
+
+		<ul>
+        <%artists.each do |artist| %>
+        <li>
+        <form action= '/artist/<%= artist[0]%>' method= 'post'>
+        <input type="hidden" name="_method" value="delete">
+        <button>X</button>
+        <a href="/artist/<%= artist[0] %>"><%= artist[1] %></a>
+        </form>
+        <% end %>
+        </li>
+        </ul>
+
+
+
+
+
+ 
+
+
+        <h3>Add an Artist here!</h3>
+        <form action="/artist" method="post">
+        	<input type="text" name = "name" placeholder="Artist Name" required>
+            <button>ADD YOUR ARTIST!</button>
+        </form>
+
+	</body>
+</html>

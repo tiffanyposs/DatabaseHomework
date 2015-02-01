@@ -1,0 +1,50 @@
+<html>
+	<body>
+		<header>
+			<h1><%= album[0][1] %></h1>
+            <a href="/artist/<%= album[0][2] %>">Go Back</a>
+            <a href="/artists">See All Artists</a>
+		</header>
+
+        <Albums>
+        <ul>
+        <%songs.each do |song| %>
+        <li>
+        <form action= '/song/<%= song[0]%>' method= 'post'>
+        <input type="hidden" name="_method" value="delete">
+        <input type="hidden" name="album_id" value="<%= album[0][0] %>">
+        <button>X</button>
+        <%= song[1] %>
+        </form>
+
+         <form action="/song/<%= song[0]%>" method = 'post'>
+            <input type="hidden" name = "_method"  value = 'put'>
+            <input type="text" name = "newname" placeholder="Update Song Title?" required>
+            <input type="hidden" name = "album_id" value = "<%= album[0][0] %>">
+            <button>Go!</button>
+        </form>
+
+        <% end %>
+        </li>
+        </ul>
+
+
+        <h3>Add a Song here!</h3>
+        <form action="/song" method="post">
+            <input type="text" name = "title" placeholder="Song Name" required>
+            <input type="hidden" name="album_id" value= <%= album[0][0] %>>
+            <button>ADD YOUR ALBUM!</button>
+        </form>
+
+
+
+        <h3>Update <%= album[0][1] %>'s name here:</h3>
+        <form action="/album/<%= album[0][0]%>" method = 'post'>
+            <input type="hidden" name = "_method"  value = 'put'>
+            <input type="text" name = "newname" placeholder="Update Albums's Name Here?" required>
+            <button>UPDATE IT!</button>
+        </form>
+
+
+	</body>
+</html>
