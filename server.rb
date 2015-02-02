@@ -5,8 +5,6 @@ require 'pry'
 
 
 
-set :public, File.dirname(__FILE__) + '/public'
-
 db = SQLite3::Database.new "music.db"
 
 #this method capitalizes data going into the database

@@ -1,16 +1,7 @@
 <html>
     <head>
-        <style>
-            body{
-                margin: 0 auto;
-            }
-            .artist_img{
-                width: 30%;
-            }
-            .album_img{
-                width: 20%;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="/css/artist.css">
+
     </head>
 	<body>
 		<header>
@@ -19,26 +10,31 @@
 		</header>
 
 
-        <ul>
-        <%albums.each do |album| %>
-        <li>
-        <form action= '/album/<%= album[0]%>' method= 'post'>
-        <input type="hidden" name="_method" value="delete">
-        <input type="hidden" name="artist_id" value="<%= artist[0][0] %>">
-        <button>X</button>
-        <a href="/album/<%= album[0] %>"><%= album[1] %></a>
-        </form>
-        <% end %>
-        </li>
-        </ul>
+
+        <section id = "your_songs">
+            <h3>Your Songs from <%= artist[0][1] %></h3>
+            <%albums.each do |album| %>
+                <div>
+                    <p>
+                        <form action= '/album/<%= album[0]%>' method= 'post'>
+                        <input type="hidden" name="_method" value="delete">
+                        <input type="hidden" name="artist_id" value="<%= artist[0][0] %>">
+                        <button>X</button>
+                        <a href="/album/<%= album[0] %>"><%= album[1] %></a>
+                        </form>
+
+                    </p>
+                </div>
+            <% end %>
+            <form action="/album" method="post">
+                <input type="text" name = "names" placeholder="Album Name" required>
+                <input type="hidden" name="artist_id" value= <%= artist[0][0] %>>
+                <!-- <button>ADD YOUR ALBUM!</button> -->
+            </form>
+        </section>
 
 
-        <h3>Add an Album here!</h3>
-        <form action="/album" method="post">
-            <input type="text" name = "names" placeholder="Album Name" required>
-            <input type="hidden" name="artist_id" value= <%= artist[0][0] %>>
-            <button>ADD YOUR ALBUM!</button>
-        </form>
+
 
 
         <h3>Update <%= artist[0][1] %>'s name here:</h3>
@@ -180,14 +176,17 @@ var albumFinder = function(band_id){
         //this puts all the albums on the page
         var z = 0
         while(z < index_array.length){
+            var div = document.createElement('div');
+            div.className = "album_card";
+            album_section.appendChild(div)
             var img = document.createElement('img');
             img.src = parsed['items'][index_array[z]]['images'][0]['url'];
             img.className = "album_img";
-            album_section.appendChild(img);
+            div.appendChild(img);
 
             var p = document.createElement('p');
             p.innerText = parsed['items'][index_array[z]]['name'];
-            album_section.appendChild(p);
+            div.appendChild(p);
             z++;
         }
         })

@@ -1,0 +1,98 @@
+body{
+    margin: 0 auto;
+    background-color: #3b3b3b; /*grey*/
+    font-family: sans-serif;
+}
+
+#artist_wrapper{
+	width: 30%;
+	float: left;
+	text-align: center;
+	margin-left: 2%;
+	margin-top: 2%;
+}
+
+#artist_wrapper h1{
+	margin: 0 auto;
+	color: white;
+	text-align: center;
+	font-size: 3em;
+	background-color: #2f2f2f;
+	padding: 3%;
+	width: 75%;
+	border-radius: 0.5em;
+}
+
+#artists{
+	background-color: white;
+	width: 80%;
+	border-radius: 20px;
+	margin: 0 auto;
+}
+
+#artists div{
+	text-align: left;
+	margin-left: 10%;
+}
+
+#artists h3{
+	background-color: #fe5454; /*red*/
+	color: white;
+	height: 6%;
+	border-radius: 20px 20px 0 0;
+	text-align: center;
+	font-size: 1.5em;
+	padding-top: 5%;
+}
+
+#artists button{
+	background-color: #fe5454;
+	color: white;
+	border-radius: 5px;
+	margin-right: 6%;
+}
+
+#artists p{
+	margin-bottom: 10%;
+}
+
+#artists a{
+	text-decoration: none;
+	color: #3b3b3b;
+}
+
+input{
+	width: 80%;
+	margin-bottom: 10%;
+	font-size: 1.5em;
+}
+
+
+
+#card_wrapper{
+	width: 60%;
+	display: inline-block;
+	margin-top: 8.5%;
+	background-color: #2f2f2f;
+	padding: 1%;
+	border-radius: 2em;
+}
+
+
+.card{
+	width: 20%;
+	height: 225px;
+	float: left;
+	background-color: #fe5454;
+	border-radius: 20px;
+	text-align: center;
+	margin: 2%;
+}
+
+#artist_section img{
+	width: 80%;
+	margin-top: 10%;
+	border: 3px solid white;
+	border-radius: 5px;
+}
+

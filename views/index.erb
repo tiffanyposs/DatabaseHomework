@@ -1,47 +1,38 @@
 <html>
     <head>
-        <style>
-            body{
-                margin: 0 auto;
-            }
-            #artist_section{
-                width: 100%;
-                border: 2px solid red;
-            }
-            .artist_img{
-                height: 50%;
-                border: red;
-            }
-        </style>
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
     </head>
 	<body>
-		<header>
+		<div id = "artist_wrapper">
 			<h1>Artists</h1>
-		</header>
+<!--Your artists -->
+        <section id = "artists">
+    		<h3>Your Artists</h3>
+            <div>
+            <%artists.each do |artist| %>
+                <p>
+                <form action= '/artist/<%= artist[0]%>' method= 'post'>
+                <input type="hidden" name="_method" value="delete">
+                <button>X</button>
+                <a href="/artist/<%= artist[0] %>"><%= artist[1] %></a>
+                </form>
+                <% end %>
+                </p>
+            </div>
+            <form action="/artist" method="post">
+                <input type="text" name = "name" placeholder="Artist Name" required>
+                <!-- <button>ADD YOUR ARTIST!</button> -->
+            </form>
+        </section>
+        </div>
 
+<!--         <h3>Add an Artist here!</h3> -->
 
-		<ul>
-        <%artists.each do |artist| %>
-        <li>
-        <form action= '/artist/<%= artist[0]%>' method= 'post'>
-        <input type="hidden" name="_method" value="delete">
-        <button>X</button>
-        <a href="/artist/<%= artist[0] %>"><%= artist[1] %></a>
-        </form>
-        <% end %>
-        </li>
-        </ul>
-
-
-        <h3>Add an Artist here!</h3>
-        <form action="/artist" method="post">
-        	<input type="text" name = "name" placeholder="Artist Name" required>
-            <button>ADD YOUR ARTIST!</button>
-        </form>
 
 <!--         for Images -->
+        <section id = "card_wrapper">
         <section id = 'artist_section'></section>
-
+        <section>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script>
@@ -50,13 +41,14 @@
         //ON PAGE LOAD
         //THIS GENERATES EACH ARTIST IMAGE
         //ids: artist_section, artist_img
+        //class card
         var artists = <%= artists %>;
         console.log(artists);
 
 artists.forEach(function(artist){
         var artist_name = artist[1]
         encoded = artist_name.replace(" ", "+");
-        console.log(encoded);
+        // console.log(encoded);
 
         var url = "https://api.spotify.com/v1/search?q=artist:" + encoded + "&type=artist"
 
@@ -67,15 +59,23 @@ artists.forEach(function(artist){
       
         var d = xhr.responseText;
         var parsed = JSON.parse(d);
+        console.log(parsed)
 
         var artist_section = document.getElementById('artist_section');
+
+        var div = document.createElement('div');
+        div.className = "card"
+        artist_section.appendChild(div);
 
         var artist_img = document.createElement('img');
         artist_img.className = "artist_img";
         artist_img.src = parsed['artists']['items'][0]['images'][0]['url'];
-        artist_section.appendChild(artist_img);
+        div.appendChild(artist_img);
 
-        console.log(parsed);
+        var name = document.createElement('p');
+        name.innerText = parsed['artists']['items'][0]['name'];
+        div.appendChild(name);
+
     })
         xhr.open("GET", url);
         xhr.send();
